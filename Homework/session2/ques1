@@ -1,2 +1,0 @@
-delete from customers where customer_name='John Doe';
-select * from orders;
