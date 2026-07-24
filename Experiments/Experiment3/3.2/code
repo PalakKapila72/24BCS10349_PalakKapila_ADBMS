@@ -1,1 +1,0 @@
-select city,count(*) as cnt from student group by city;
