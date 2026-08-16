@@ -1,0 +1,9 @@
+SELECT
+    CASE
+        WHEN Marks < 50 THEN 'C'
+        WHEN Marks BETWEEN 50 AND 80 THEN 'B'
+        WHEN Marks > 80 THEN 'A'
+    END AS Grades,
+    COUNT(*) AS student_count
+FROM marks
+GROUP BY 1;
