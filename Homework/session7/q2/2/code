@@ -1,0 +1,6 @@
+SELECT e.emp_id, e.emp_name
+FROM employee e
+WHERE e.emp_name IN (
+    SELECT emp_name
+    FROM pt_employee
+);
