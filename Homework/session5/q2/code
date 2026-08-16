@@ -1,0 +1,52 @@
+WITH weekly_touches AS (
+    SELECT DISTINCT
+        contact_id,
+        DATE_TRUNC('week', event_date) AS week
+    FROM marketing_touches
+),
+
+numbered AS (
+    SELECT
+        contact_id,
+        week,
+        LAG(week) OVER (
+            PARTITION BY contact_id
+            ORDER BY week
+        ) AS previous_week
+    FROM weekly_touches
+),
+
+streaks AS (
+    SELECT
+        contact_id,
+        week,
+        SUM(
+            CASE
+                WHEN previous_week IS NULL
+                     OR DATEDIFF('week', previous_week, week) > 1
+                THEN 1
+                ELSE 0
+            END
+        ) OVER (
+            PARTITION BY contact_id
+            ORDER BY week
+        ) AS streak_id
+    FROM numbered
+),
+
+qualified AS (
+    SELECT contact_id
+    FROM streaks
+    GROUP BY contact_id, streak_id
+    HAVING COUNT(*) >= 3
+)
+
+SELECT DISTINCT c.email
+FROM crm_contacts c
+JOIN qualified q
+    ON c.contact_id = q.contact_id
+WHERE c.contact_id IN (
+    SELECT contact_id
+    FROM marketing_touches
+    WHERE event_type = 'trial_request'
+);
