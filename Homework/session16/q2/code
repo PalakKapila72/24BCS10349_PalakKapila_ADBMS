@@ -1,0 +1,11 @@
+-- 1. JOIN
+SELECT *
+FROM student
+JOIN course
+ON student.Course_id = course.Course_id;
+
+-- 2. RIGHT JOIN
+SELECT *
+FROM student
+RIGHT JOIN course
+ON student.Course_id = course.Course_id;
